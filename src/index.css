@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: Arial, sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 15px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 15px;
+  background: transparent;
+  margin: 2rem;
+}
+
+.scrollbarfeature {
+  scroll-behavior: smooth;
+}
+
+.scrollbarfeature:hover::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+.error__404__text {
+  font-size: 500px;
+  color: red;
+  padding: 0px;
+}
+
+.hideScrollBar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hideScrollBar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* slider css */
+.slider {
+  /* -webkit-appearance: none; */
+  height: 8px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.slider::-webkit-slider-thumb {
+  /* -webkit-appearance: none; */
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #2962ff;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #2962ff;
+  cursor: pointer;
+}
+
+.button_highlight {
+  cursor: pointer;
+  border-radius: 1.5rem;
+  color: white;
+  background-color: rgba(16, 16, 16, 0.8);
+  border: none;
+  filter: opacity(80);
+  padding: 0.5rem 1rem;
+  transition: background-color 300ms;
+}
+
+.button_highlight:hover {
+  background-color: rgb(24, 24, 24);
+}
+
+@media screen and (max-width: 400px) {
+  .scrollbarfeature:hover::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+}
