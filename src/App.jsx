@@ -1,13 +1,13 @@
-import Login from './routes/login';
-import { Routes, Route } from '@solidjs/router';
-import ChatApp from './routes/chatApp';
+import ChatLayout from "./layout/layout";
+import LeftLayout from "./layout/left-layout";
+import RightLayout from "./layout/right-layout";
 
 function App() {
   return (
-    <Routes>
-        <Route path='/app' component={<ChatApp />}/>
-        <Route path='/login' component={<Login />}/>
-    </Routes>
+    <ChatLayout>
+      <LeftLayout />
+      <RightLayout />
+    </ChatLayout>
   );
 }
 
