@@ -4,13 +4,10 @@ import ChatApp from './routes/chatApp';
 
 function App() {
   return (
-    <div>
-      fdsd
     <Routes>
         <Route path='/app' component={<ChatApp />}/>
         <Route path='/login' component={<Login />}/>
     </Routes>
-    </div>
   );
 }
 
