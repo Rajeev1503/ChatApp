@@ -1,7 +1,6 @@
-import Login from './pages/login';
+import Login from './routes/login';
 import { Routes, Route } from '@solidjs/router';
-import Signup from './pages/signup';
-import ChatApp from './pages/chatApp';
+import ChatApp from './routes/chatApp';
 
 function App() {
   return (
