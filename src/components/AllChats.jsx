@@ -20,7 +20,7 @@ export default function AllChats() {
   async function getAllChatRooms() {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-sigma.vercel.app' : 'http://localhost:5001'}/user/${userStore.userId}/allchatrooms``,
+        `${import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-sigma.vercel.app' : 'http://localhost:5001'}/user/${userStore.userId}/allchatrooms`,
         {
           method: "GET",
         }
