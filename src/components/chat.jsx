@@ -72,7 +72,6 @@ export default function Chat() {
       `${SERVER_URL}/${chatRoomStore.chatRoom.id}`,
       {
         method: "POST",
-        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
