@@ -69,7 +69,7 @@ export default function Chat() {
 
     setMessageInput("");
     const response = await fetch(
-      `${SERVER_URL}/${chatRoomStore.chatRoom.id}`,
+      `${SERVER_URL}/chatMessage/createChatMessage/${chatRoomStore.chatRoom.id}`,
       {
         method: "POST",
         headers: {
