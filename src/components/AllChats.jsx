@@ -20,7 +20,7 @@ export default function AllChats() {
   async function getAllChatRooms() {
     try {
       const response = await fetch(
-        `https://chat-app-server-sigma.vercel.app/user/${userStore.userId}/allchatrooms`,
+        `http://localhost:5001/user/${userStore.userId}/allchatrooms`,
         {
           method: "GET",
         }
@@ -51,17 +51,26 @@ export default function AllChats() {
 
   async function getChatRoom(chatRoomId) {
     try {
-      let result;
-      userStore.allChatRooms.map((chatRoom) => {
-        if (chatRoom.chatRoom.id == chatRoomId) {
-          return (result = chatRoom.chatRoom);
-        }
-      });
+      // let result;
+      // userStore.allChatRooms.map((chatRoom) => {
+      //   if (chatRoom.chatRoom.id == chatRoomId) {
+      //     return (result = chatRoom.chatRoom);
+      //   }
+      // });
       // console.log(result)
+      // ${import.meta.env.VITE_PRODUCTION_URL}
+      console.log(import.meta.env.VITE_NODE_ENV)
+        const response = await fetch(
+          `${import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-sigma.vercel.app' : 'http://localhost:5001'}/chatroom/${chatRoomId}`,
+          {
+            method: "GET",
+          }
+        );
+        const result = await response.json();
       result && setChatRoomStore("messagesOfChatRoom", []);
-      setChatRoomStore("chatRoom", result);
+      setChatRoomStore("chatRoom", result.data.chatRoom);
       setChatRoomStore("chatRoomId", chatRoomId);
-      result.chatMessages.map((message) => {
+      result.data.chatRoom.chatMessages.map((message) => {
         return setChatRoomStore("messagesOfChatRoom", [
           ...chatRoomStore.messagesOfChatRoom,
           message,
