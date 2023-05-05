@@ -22,13 +22,13 @@ export default function LeftPanel(props) {
   }
 
   return (
-    <div class="h-full relative p-2 flex flex-col gap-4 items-center justify-center border-r border-[#1d1d1d]">
-      <div class="h-1/2 ">
-        <div class="mt-32 font-extrabold text-6xl -rotate-90 text-[#1d1d1d]">
+    <div class="h-full w-full relative p-2 flex flex-col gap-4 border-r border-[#1d1d1d]">
+      <div class="h-1/2 w-full flex items-center justify-center">
+        <div class="font-extrabold text-6xl -rotate-90 text-[#1d1d1d]">
           {heading()}
         </div>
       </div>
-      <div class="relative flex flex-col gap-8 items-center h-1/2 pb-4">
+      <div class="relative flex flex-col gap-8 items-center justify-end h-1/2 pb-4">
         <div
           onClick={() => {
             props.signalVariables.allChats.setShowAllChats(true);
@@ -52,12 +52,11 @@ export default function LeftPanel(props) {
             props.signalVariables.userProfile.setShowUserProfile(false);
             props.signalVariables.settingMenu.setShowSettingMenu(false);
             props.signalVariables.allChats.setShowAllChats(false);
-            setHeading("Friends");
+            setHeading("Phone");
           }}
           class="relative w-full flex items-center justify-center min-h-[8%]"
         >
           <div
-            after="Friends"
             class={buttonStyle(
               props.signalVariables.allFriends.showAllFriends()
             )}
@@ -71,7 +70,7 @@ export default function LeftPanel(props) {
             props.signalVariables.userProfile.setShowUserProfile(false);
             props.signalVariables.settingMenu.setShowSettingMenu(false);
             props.signalVariables.allChats.setShowAllChats(false);
-            setHeading("Friends");
+            setHeading("Video");
           }}
           class="relative w-full flex items-center justify-center min-h-[8%]"
         >
@@ -120,21 +119,6 @@ export default function LeftPanel(props) {
             )}
           >
             <FiSettings />
-          </div>
-        </div>
-        <div class="relative w-full flex items-center justify-center min-h-[8%]">
-          {/* <input
-          class={`text-white outline-none flex-grow min-w-max rounded-3xl border-2 border-[#4d4d4d] bg-transparent px-4 text-sm caret-white placeholder:text-[#ccc] focus:placeholder:text-[#333]`}
-          placeholder="Friend's Username or Email"
-        />
-        <button
-          class={`w-full flex-grow max-w-max shadow-md px-4 rounded-3xl cursor-pointer bg-[#e7e9ea] text-black font-semibold text-sm`}
-          type="submit"
-        >
-          Search
-        </button> */}
-          <div class="max-w-min text-1xl bg-[#e7e9ea] rounded-3xl p-3 cursor-pointer">
-            <FiPlus />
           </div>
         </div>
       </div>

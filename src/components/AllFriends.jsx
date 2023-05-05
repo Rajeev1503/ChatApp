@@ -1,40 +1,37 @@
-import { FaSolidImagePortrait } from "solid-icons/fa";
-import LeftLayout from "../layout/left-layout";
 
 export default function AllFriends() {
   return (
-    <div class="h-full flex flex-col text-xs px-4">
-      <div class="h-full flex flex-col gap-4 items-center scrollbarfeature hideScrollBar overflow-y-scroll">
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
-        <span class="bg-[#e7e9ea] rounded-full text-2xl p-2 text-black">
-          <FaSolidImagePortrait />
-        </span>
+    <div class="h-full flex flex-col gap-4 text-xs lg:pl-6 p-2 lg:p-4">
+      <div class="w-full flex flex-row gap-2 my-4">
+        <input
+          class={`p-3 font-semibold text-white outline-none flex-grow min-w-max rounded-3xl bg-transparent border-2 border-[#4d4d4d] px-4 text-sm caret-white placeholder:text-[#4d4d4d] focus:placeholder:text-[#2d2d2d]`}
+          placeholder="Search Friend"
+        />
+      </div>
+      <div class="h-full px-0 xl:px-3 flex flex-col gap-3 scrollbarfeature hideScrollBar overflow-y-scroll">
+        <div class="button_highlight">
+          <div class="flex flex-row items-center gap-4 font-semibold text-sm">
+            <span
+              class={`rounded-full text-3xl w-[40px] h-[40px] text-transparent`}
+              style={{
+                background: `rgb(${Math.floor(Math.random() * 150) + 50}, ${
+                  Math.floor(Math.random() * 160) + 100
+                },${Math.floor(Math.random() * 250) + 200})`,
+              }}
+            >
+              
+            </span>
+            <div class="flex-grow max-w-full flex flex-row justify-between items-center">
+              <div class="flex flex-col gap-1">
+                <span>Friend 2</span>
+                <span class="text-[#4d4d4d] text-xs">
+                  Last Message sent on this room ...
+                </span>
+              </div>
+              <span class="text-[#aaa] text-[0.6rem]">Yesterday</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

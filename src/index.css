@@ -92,6 +92,10 @@
   background-color: rgb(24, 24, 24);
 }
 
+input {
+  font-weight: 600;
+}
+
 @media screen and (max-width: 400px) {
   .scrollbarfeature:hover::-webkit-scrollbar-thumb {
     background-color: transparent;

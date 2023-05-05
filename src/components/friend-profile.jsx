@@ -3,7 +3,7 @@ import { FaSolidCross, FaSolidImagePortrait, FaSolidX } from "solid-icons/fa";
 export default function FriendProfile(props) {
   return (
     <div class="relative h-full flex flex-col gap-8 text-md text-white">
-      <div class="absolute p-2 text-xl" onClick={props.showFriendsProfile}>
+      <div class="absolute cursor-pointer p-2 text-xl" onClick={props.showFriendsProfile}>
         <FaSolidX />
       </div>
       <div class="h-[30%] flex flex-row items-center justify-center gap-2 mt-6 text-8xl">

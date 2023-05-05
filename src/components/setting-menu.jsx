@@ -3,7 +3,7 @@ export default function SettingMenu(props) {
     <div class="h-full flex flex-col gap-8 px-2 md:p-4 text-md text-white">
       <div class="h-[6%] flex flex-row gap-2 mt-2">
         <input
-          class={`text-white outline-none flex-grow min-w-max rounded-3xl bg-[#273340] bg-opacity-50 px-4 text-sm caret-white placeholder:text-[#bbb] focus:placeholder:text-[#999]`}
+          class={`p-3 font-semibold text-white outline-none flex-grow min-w-max rounded-3xl bg-transparent border-2 border-[#4d4d4d] px-4 text-sm caret-white placeholder:text-[#4d4d4d] focus:placeholder:text-[#2d2d2d]`}
           placeholder="Search settings"
         />
         <button
