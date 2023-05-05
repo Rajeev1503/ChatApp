@@ -6,7 +6,7 @@ import { createStore } from "solid-js/store";
 export default function AllChats() {
   const [chatRoomStore, setChatRoomStore] = useChatRoomContext();
   const [userStore, setUserStore] = useUserContext();
-  const SERVER_URL = import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-orcin.vercel.app/' : 'http://localhost:5001'
+  const SERVER_URL = import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-orcin.vercel.app' : 'http://localhost:5001'
 
   onMount(() => {
     if (userStore.userId == null) {
