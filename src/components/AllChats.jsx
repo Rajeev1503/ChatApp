@@ -6,7 +6,10 @@ import { createStore } from "solid-js/store";
 export default function AllChats() {
   const [chatRoomStore, setChatRoomStore] = useChatRoomContext();
   const [userStore, setUserStore] = useUserContext();
-  const SERVER_URL = import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-orcin.vercel.app' : 'http://localhost:5001'
+  const SERVER_URL =
+    import.meta.env.VITE_NODE_ENV == "PRODUCTION"
+      ? "https://chat-app-server-orcin.vercel.app"
+      : "http://localhost:5001";
 
   onMount(() => {
     if (userStore.userId == null) {
@@ -19,7 +22,6 @@ export default function AllChats() {
   });
 
   async function getAllChatRooms() {
-    console.log(SERVER_URL)
     try {
       const response = await fetch(
         `${SERVER_URL}/user/${userStore.userId}/allchatrooms`,
@@ -28,21 +30,26 @@ export default function AllChats() {
         }
       );
       const result = await response.json();
+
       if (result) setUserStore("allChatRooms", []);
       const chatRooms = result.data.userModel.chatRooms;
       const joinedChatRooms = result.data.userModel.joinedChatRooms;
-      chatRooms.length > 0 && 
-        chatRooms.map((chatRoom) => { 
+      chatRooms.length > 0 &&
+        chatRooms.map((chatRoom) => {
           setUserStore("allChatRooms", userStore.allChatRooms.length, {
             chatRoom: chatRoom,
-            lastMessage: chatRoom.chatMessages.at(-1).message,
+            lastMessage:
+              chatRoom.chatMessages.length > 0 &&
+              chatRoom.chatMessages.at(-1).message,
           });
         });
       joinedChatRooms.length > 0 &&
         joinedChatRooms.map((joinedChatRoom) => {
           setUserStore("allChatRooms", userStore.allChatRooms.length, {
             chatRoom: joinedChatRoom,
-            lastMessage: joinedChatRoom.chatMessages.at(-1).message,
+            lastMessage:
+              joinedChatRoom.chatMessages.length > 0 &&
+              joinedChatRoom.chatMessages.at(-1).message,
           });
         });
       return;
@@ -60,15 +67,10 @@ export default function AllChats() {
       //   }
       // });
       // console.log(result)
-      // ${import.meta.env.VITE_PRODUCTION_URL}
-      console.log(import.meta.env.VITE_NODE_ENV)
-        const response = await fetch(
-          `${SERVER_URL}/chatroom/${chatRoomId}`,
-          {
-            method: "GET",
-          }
-        );
-        const result = await response.json();
+      const response = await fetch(`${SERVER_URL}/chatroom/${chatRoomId}`, {
+        method: "GET",
+      });
+      const result = await response.json();
       result && setChatRoomStore("messagesOfChatRoom", []);
       setChatRoomStore("chatRoom", result.data.chatRoom);
       setChatRoomStore("chatRoomId", chatRoomId);
