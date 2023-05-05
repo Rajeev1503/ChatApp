@@ -6,6 +6,10 @@ import { useUserContext } from "../../context/userContext";
 import { createEffect, createSignal, onMount } from "solid-js";
 
 export default function Chat() {
+
+  const SERVER_URL = import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-orcin.vercel.app' : 'http://localhost:5001'
+
+
   const [chatRoomStore, setChatRoomStore] = useChatRoomContext();
   const [userStore, setUserStore] = useUserContext();
   const [messageInput, setMessageInput] = createSignal("");
@@ -65,7 +69,7 @@ export default function Chat() {
 
     setMessageInput("");
     const response = await fetch(
-      `http://localhost:5001/chatMessage/createChatMessage/${chatRoomStore.chatRoom.id}`,
+      `${SERVER_URL}/${chatRoomStore.chatRoom.id}`,
       {
         method: "POST",
         mode: "cors",
