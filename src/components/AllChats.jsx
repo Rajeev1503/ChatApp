@@ -6,6 +6,7 @@ import { createStore } from "solid-js/store";
 export default function AllChats() {
   const [chatRoomStore, setChatRoomStore] = useChatRoomContext();
   const [userStore, setUserStore] = useUserContext();
+  const SERVER_URL = import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-orcin.vercel.app/' : 'http://localhost:5001'
 
   onMount(() => {
     if (userStore.userId == null) {
@@ -18,9 +19,10 @@ export default function AllChats() {
   });
 
   async function getAllChatRooms() {
+    console.log(SERVER_URL)
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-sigma.vercel.app' : 'http://localhost:5001'}/user/${userStore.userId}/allchatrooms`,
+        `${SERVER_URL}/user/${userStore.userId}/allchatrooms`,
         {
           method: "GET",
         }
@@ -29,8 +31,8 @@ export default function AllChats() {
       if (result) setUserStore("allChatRooms", []);
       const chatRooms = result.data.userModel.chatRooms;
       const joinedChatRooms = result.data.userModel.joinedChatRooms;
-      chatRooms.length > 0 &&
-        chatRooms.map((chatRoom) => {
+      chatRooms.length > 0 && 
+        chatRooms.map((chatRoom) => { 
           setUserStore("allChatRooms", userStore.allChatRooms.length, {
             chatRoom: chatRoom,
             lastMessage: chatRoom.chatMessages.at(-1).message,
@@ -61,7 +63,7 @@ export default function AllChats() {
       // ${import.meta.env.VITE_PRODUCTION_URL}
       console.log(import.meta.env.VITE_NODE_ENV)
         const response = await fetch(
-          `${import.meta.env.VITE_NODE_ENV == "PRODUCTION" ? 'https://chat-app-server-sigma.vercel.app' : 'http://localhost:5001'}/chatroom/${chatRoomId}`,
+          `${SERVER_URL}/chatroom/${chatRoomId}`,
           {
             method: "GET",
           }
