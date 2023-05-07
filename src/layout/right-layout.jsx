@@ -87,7 +87,7 @@ export default function RightLayout(props) {
                   <span class="text-sm text-[#6d6d6d]">@rajeev1503</span>
                 </div>
               </div>
-              <div class="flex gap-6 items-center text-xl">
+              <div class="text-white flex gap-6 items-center text-xl">
                 <div class="relative">
                   {chatRoomStore.chatRoom.isGroup && (
                     <div class="relative flex flex-row items-center justify-end rounded-full p-1 cursor-pointer">
