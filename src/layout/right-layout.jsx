@@ -16,35 +16,7 @@ export default function RightLayout(props) {
   const [addFriendModal, setAddFriendModal] = createSignal(false);
   const [searchInputValue, setSearchInputValue] = createSignal(false);
 
-  const addMemberHandler = async () => {
-    if (!searchInputValue()) {
-      return setFoundUsers([]);
-    }
-    try {
-      setAddFriendModal(true);
-      const response = await fetch(`${serverUrl}/user/searchUsers`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ searchValue: searchInputValue() }),
-      });
-      let result = await response.json();
-      if (!result.success) return console.log("error in result");
 
-      result = result.data.userModels;
-      console.log(result);
-      setFoundUsers([]);
-      result.map((user) => {
-        return setFoundUsers([
-          ...foundUsers,
-          { userName: user.userName, fullname: user.fullName },
-        ]);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <div class="flex flex-col bg-[#000] h-full md:border-l border-[#1d1d1d] md:w-[60vw] lg:w-[70vw] ">
@@ -113,7 +85,7 @@ export default function RightLayout(props) {
                           placeholder="Username or email"
                           onInput={(e) => {
                             setSearchInputValue(e.target.value);
-                            addMemberHandler();
+                            // addMemberHandler();
                           }}
                         />
 
