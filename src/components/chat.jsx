@@ -51,6 +51,8 @@ export default function Chat() {
     let dateAndTime = "";
     (function () {
       const d = new Date();
+
+      let diff = d.getTimezoneOffset();
       return (dateAndTime = d.toISOString());
     })();
 

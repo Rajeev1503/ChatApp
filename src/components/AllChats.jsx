@@ -106,7 +106,7 @@ export default function AllChats() {
                 onClick={() => {
                   getChatRoom(allChatRoom[1].chatRoom.id);
                 }}
-                class="button_highlight"
+                class={`button_highlight ${allChatRoom[1].chatRoom.id == chatRoomStore.chatRoomId && '!bg-[#1d1d1d]'}`}
               >
                 <div class="flex flex-row items-center gap-4 font-semibold text-sm">
                   <span
