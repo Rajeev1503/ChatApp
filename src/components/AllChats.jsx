@@ -1,15 +1,11 @@
-import { createResource, createSignal, onCleanup, onMount } from "solid-js";
+import { onCleanup, onMount } from "solid-js";
 import { useChatRoomContext } from "../../context/chatRoomContext";
 import { useUserContext } from "../../context/userContext";
-import { createStore } from "solid-js/store";
-
+import { produce } from "solid-js/store";
+import serverUrl from "../../config/server_url";
 export default function AllChats() {
   const [chatRoomStore, setChatRoomStore] = useChatRoomContext();
   const [userStore, setUserStore] = useUserContext();
-  const SERVER_URL =
-    import.meta.env.VITE_NODE_ENV == "PRODUCTION"
-      ? "https://chat-app-server-orcin.vercel.app"
-      : "http://localhost:5001";
 
   onMount(() => {
     if (userStore.userId == null) {
@@ -24,7 +20,7 @@ export default function AllChats() {
   async function getAllChatRooms() {
     try {
       const response = await fetch(
-        `${SERVER_URL}/user/${userStore.userId}/allchatrooms`,
+        `${serverUrl}/user/${userStore.userId}/allchatrooms`,
         {
           method: "GET",
         }
@@ -33,25 +29,37 @@ export default function AllChats() {
 
       if (result) setUserStore("allChatRooms", []);
       const chatRooms = result.data.userModel.chatRooms;
+      // console.log(chatRooms)
       const joinedChatRooms = result.data.userModel.joinedChatRooms;
       chatRooms.length > 0 &&
         chatRooms.map((chatRoom) => {
           setUserStore("allChatRooms", userStore.allChatRooms.length, {
             chatRoom: chatRoom,
-            lastMessage:
-              chatRoom.chatMessages.length > 0 &&
-              chatRoom.chatMessages.at(-1).message,
+            lastMessage: {
+              message:
+                chatRoom.chatMessages.length > 0 &&
+                chatRoom.chatMessages.at(-1).message,
+              date:
+                chatRoom.chatMessages.length > 0 &&
+                chatRoom.chatMessages.at(-1).createdAt,
+            },
           });
         });
       joinedChatRooms.length > 0 &&
         joinedChatRooms.map((joinedChatRoom) => {
           setUserStore("allChatRooms", userStore.allChatRooms.length, {
             chatRoom: joinedChatRoom,
-            lastMessage:
-              joinedChatRoom.chatMessages.length > 0 &&
-              joinedChatRoom.chatMessages.at(-1).message,
+            lastMessage: {
+              message:
+                joinedChatRoom.chatMessages.length > 0 &&
+                joinedChatRoom.chatMessages.at(-1).message,
+              date:
+                joinedChatRoom.chatMessages.length > 0 &&
+                joinedChatRoom.chatMessages.at(-1).createdAt,
+            },
           });
         });
+
       return;
     } catch (error) {
       console.log(error);
@@ -60,14 +68,7 @@ export default function AllChats() {
 
   async function getChatRoom(chatRoomId) {
     try {
-      // let result;
-      // userStore.allChatRooms.map((chatRoom) => {
-      //   if (chatRoom.chatRoom.id == chatRoomId) {
-      //     return (result = chatRoom.chatRoom);
-      //   }
-      // });
-      // console.log(result)
-      const response = await fetch(`${SERVER_URL}/chatroom/${chatRoomId}`, {
+      const response = await fetch(`${serverUrl}/chatroom/${chatRoomId}`, {
         method: "GET",
       });
       const result = await response.json();
@@ -89,18 +90,21 @@ export default function AllChats() {
   return (
     <div class="h-full flex flex-col gap-4 text-xs lg:pl-6 p-2 lg:p-4">
       <div class="h-full flex flex-col gap-4">
-        <div class="flex flex-row gap-2 my-4">
-          <input
-            class={`p-3 text-white outline-none flex-grow min-w-max rounded-3xl bg-transparent border-2 border-[#4d4d4d] px-4 text-sm caret-white placeholder:text-[#4d4d4d] focus:placeholder:text-[#2d2d2d]`}
-            placeholder="Search Messages"
-          />
+        <div class="my-4">
+          <input class={``} placeholder="Search Messages" />
         </div>
         <div class="h-full px-0 xl:px-3 flex flex-col gap-3 scrollbarfeature hideScrollBar overflow-y-scroll">
-          <For each={userStore.allChatRooms}>
+          <For
+            each={Object.entries(userStore.allChatRooms).sort((a, b) => {
+              const d1 = new Date(b[1].lastMessage.date);
+              const d2 = new Date(a[1].lastMessage.date);
+              return d1 - d2;
+            })}
+          >
             {(allChatRoom, i) => (
               <div
                 onClick={() => {
-                  getChatRoom(allChatRoom.chatRoom.id);
+                  getChatRoom(allChatRoom[1].chatRoom.id);
                 }}
                 class="button_highlight"
               >
@@ -117,9 +121,9 @@ export default function AllChats() {
                   ></span>
                   <div class="flex-grow max-w-full flex flex-row justify-between items-center">
                     <div class="flex flex-col gap-1">
-                      <span>{allChatRoom.chatRoom.chatRoomName}</span>
+                      <span>{allChatRoom[1].chatRoom.chatRoomName}</span>
                       <span class="text-[#6d6d6d] text-xs">
-                        {allChatRoom.lastMessage}
+                        {allChatRoom[1].lastMessage.message}
                       </span>
                     </div>
                     <span class="text-[#3d3d3d] text-[0.6rem]">Yesterday</span>

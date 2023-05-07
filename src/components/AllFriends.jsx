@@ -4,7 +4,7 @@ export default function AllFriends() {
     <div class="h-full flex flex-col gap-4 text-xs lg:pl-6 p-2 lg:p-4">
       <div class="w-full flex flex-row gap-2 my-4">
         <input
-          class={`p-3 font-semibold text-white outline-none flex-grow min-w-max rounded-3xl bg-transparent border-2 border-[#4d4d4d] px-4 text-sm caret-white placeholder:text-[#4d4d4d] focus:placeholder:text-[#2d2d2d]`}
+          class={``}
           placeholder="Search Friend"
         />
       </div>

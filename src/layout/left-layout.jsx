@@ -6,16 +6,28 @@ import LeftPanel from "../components/left-panel";
 import SettingMenu from "../components/setting-menu";
 import dp from "../assets/dp.jpg";
 import AddFriend from "../components/modal/add-friend";
+import serverUrl from "../../config/server_url";
+import { createStore } from "solid-js/store";
+import { useUserContext } from "../../context/userContext";
 
 export default function LeftLayout(props) {
+  const [userStore, setUserStore] = useUserContext();
+  let inputFieldRef;
+
   const [placeholder, setPlaceholder] = createSignal("");
   const [formUrl, setFormUrl] = createSignal(false);
-  const [showForm, setShowForm] = createSignal(false);
+  const [showAddFriendForm, setShowAddFriendForm] = createSignal(false);
+  const [showAddGroupForm, setShowAddGroupForm] = createSignal(false);
   const [showSettingMenu, setShowSettingMenu] = createSignal(false);
   const [showUserProfile, setShowUserProfile] = createSignal(false);
   const [showAllFriends, setShowAllFriends] = createSignal(false);
   const [showAllChats, setShowAllChats] = createSignal(true);
   const [addFriendModal, setAddFriendModal] = createSignal(false);
+  const [addGroupModal, setAddGroupModal] = createSignal(false);
+  const [handlerToCall, setHandlerToCall] = createSignal();
+  const [heading, setHeading] = createSignal();
+  const [searchInputValue, setSearchInputValue] = createSignal("");
+  const [foundUsers, setFoundUsers] = createStore([]);
 
   const signalVariables = {
     settingMenu: {
@@ -35,18 +47,80 @@ export default function LeftLayout(props) {
       setShowAllChats: setShowAllChats,
     },
   };
-  let inputFieldRef;
-  const [heading, setHeading] = createSignal();
-  const [searchInputValue, setSearchInputValue] = createSignal("");
 
-  function whichFormToShowVariables(placeholder, formUrl) {
-    // if (formToShow) {
-      setShowForm(true);
-      inputFieldRef.focus();
-      setPlaceholder(placeholder);
-      setFormUrl(formUrl);
-    // }
+  function whichFormToShowVariables(type, placeholder, handler) {
+    setPlaceholder(placeholder);
+    if (type == "addFriend") {
+      setShowAddFriendForm(true);
+      setHandlerToCall(handler);
+      inputFieldRef?.focus();
+      return;
+    } else if (type == "addGroup") {
+      setShowAddGroupForm(true);
+      setHandlerToCall(handler);
+      inputFieldRef?.focus();
+      return;
+    }
   }
+
+  const friendSearchHandler = async () => {
+    if (!searchInputValue()) {
+      return setFoundUsers([]);
+    }
+    try {
+      setAddFriendModal(true);
+      const response = await fetch(`${serverUrl}/user/searchUsers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ searchValue: searchInputValue() }),
+      });
+      let result = await response.json();
+      if (!result.success) return console.log("error in result");
+
+      result = result.data.userModels;
+      setFoundUsers([]);
+      result.map((user) => {
+        return setFoundUsers([
+          ...foundUsers,
+          { userName: user.userName, fullname: user.fullName },
+        ]);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const addGroupHandler = async () => {
+    if (!searchInputValue()) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${serverUrl}/chatroom/creategroupchatroom`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userStore.userId,
+            chatRoomName: searchInputValue(),
+          }),
+        }
+      );
+      const result = await response.json();
+      if (!result.success) return console.log("error in result");
+      const createdChatRoom = result.data.createChatRoom;
+      createdChatRoom &&
+        setUserStore("allChatRooms", userStore.allChatRooms.length, {
+          chatRoom: createdChatRoom,
+          lastMessage: [],
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div class="h-full md:flex hidden flex-col bg-[#000] md:w-[40vw] lg:w-[30vw] ">
@@ -73,45 +147,53 @@ export default function LeftLayout(props) {
           </div>
           <div class="flex gap-2 items-center font-semibold">
             <div class=" h-full">
-              {showForm() == true && (
-                <form
-                  class="h-full flex items-center justify-center gap-2 text-xs p-1"
-                  method="POST"
-                  action={`/${formUrl()}`}
-                >
+              <div class="h-full flex items-center justify-center gap-2 text-xs p-1">
+                {showAddFriendForm() && (
                   <input
-                    class={`${
-                      showForm() && "focus"
-                    } h-full text-white outline-none flex-grow min-w-max rounded-3xl border-2 border-[#4d4d4d] bg-transparent px-4 text-sm caret-white placeholder:text-[#4d4d4d] focus:placeholder:text-[#2d2d2d]`}
+                    class={`${showAddFriendForm() && "focus"}`}
                     placeholder={placeholder()}
                     value={searchInputValue()}
-                    onChange={(e) => {
-                      console.log("changing")
-                      setAddFriendModal(true);
-                      console.log(addFriendModal());
+                    onInput={(e) => {
                       setSearchInputValue(e.target.value);
-                      console.log(searchInputValue())
+                      handlerToCall()();
                     }}
-                    onFocusOut={() =>setShowForm(false)}
+                    onFocusOut={() => {
+                      !searchInputValue() && setShowAddFriendForm(false);
+                    }}
                     ref={inputFieldRef}
                   />
-                  <button
-                    class={`h-full w-full flex-grow max-w-max shadow-md px-4 rounded-3xl cursor-pointer bg-[#e7e9ea] text-black font-semibold text-xs`}
-                    type="submit"
-                  >
-                    Search
-                  </button>
-                </form>
-              )}
+                )}
+                {showAddGroupForm() && (
+                  <>
+                    <input
+                      class={`${showAddGroupForm() && "focus"}`}
+                      placeholder={placeholder()}
+                      value={searchInputValue()}
+                      onFocusOut={() => {
+                        !searchInputValue() && setShowAddGroupForm(false);
+                      }}
+                      onChange={(e) => setSearchInputValue(e.target.value)}
+                      ref={inputFieldRef}
+                    />
+                    <button
+                      class={`flex gap-1 items-center rounded-3xl px-4 p-2 bg-[#fff] text-black font-semibold`}
+                      onClick={() => addGroupHandler()}
+                    >
+                      Add
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-            {!showForm() && (
+            {!showAddFriendForm() && !showAddGroupForm() && (
               <>
                 <div
                   class="relative bg-[#e7e9ea] rounded-3xl text-xs p-2 px-3 cursor-pointer"
                   onClick={() => {
                     whichFormToShowVariables(
+                      "addFriend",
                       "Username or email",
-                      "/addfriend"
+                      () => friendSearchHandler
                     );
                   }}
                 >
@@ -120,7 +202,11 @@ export default function LeftLayout(props) {
                 <div
                   class="bg-[#e7e9ea] cursor-pointer rounded-3xl text-xs p-2 px-3"
                   onClick={() => {
-                    whichFormToShowVariables("Group Name", "/addgroup");
+                    whichFormToShowVariables(
+                      "addGroup",
+                      "Group Name",
+                      () => addGroupHandler
+                    );
                   }}
                 >
                   <button>New Group</button>
@@ -140,7 +226,7 @@ export default function LeftLayout(props) {
       </header>
       <div class="w-full h-[93%]">
         <div class="h-full flex flex-row w-full">
-          <div class="h-full w-[15%] hidden md:block">
+          <div class=" h-full w-[15%] hidden md:block">
             <LeftPanel
               signalVariables={signalVariables}
               setHeading={setHeading(heading())}
@@ -149,7 +235,14 @@ export default function LeftLayout(props) {
           <div class="h-full w-[85%]">
             <Switch fallback={<AllChats />}>
               <Match when={addFriendModal()}>
-                <AddFriend />
+                <AddFriend
+                  props={{ setAddFriendModal, setShowForm, foundUsers }}
+                />
+              </Match>
+              <Match when={addGroupModal()}>
+                <AddFriend
+                  props={{ setAddFriendModal, setShowForm, foundUsers }}
+                />
               </Match>
               <Match when={showAllChats()}>
                 <AllChats />

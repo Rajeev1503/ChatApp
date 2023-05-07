@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "NODE_ENV" : ""
+    "NODE_ENV": ""
   },
   "license": "MIT",
   "devDependencies": {
@@ -20,6 +20,7 @@
   "dependencies": {
     "@solidjs/router": "^0.8.2",
     "graphql": "^16.6.0",
+    "pnpm": "^8.4.0",
     "solid-icons": "^1.0.4",
     "solid-js": "^1.6.10"
   }

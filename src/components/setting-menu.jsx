@@ -1,17 +1,11 @@
 export default function SettingMenu(props) {
   return (
-    <div class="h-full flex flex-col gap-8 px-2 md:p-4 text-md text-white">
-      <div class="h-[6%] flex flex-row gap-2 mt-2">
+    <div class="h-full flex flex-col gap-8 lg:pl-6 p-2 lg:p-4 text-md text-white">
+      <div class="my-4">
         <input
-          class={`p-3 font-semibold text-white outline-none flex-grow min-w-max rounded-3xl bg-transparent border-2 border-[#4d4d4d] px-4 text-sm caret-white placeholder:text-[#4d4d4d] focus:placeholder:text-[#2d2d2d]`}
+          class={``}
           placeholder="Search settings"
         />
-        <button
-          class={`w-full flex-grow max-w-max shadow-md px-4 rounded-3xl cursor-pointer bg-white text-black font-semibold text-sm`}
-          type="submit"
-        >
-          Search
-        </button>
       </div>
       <div class="pt-2 px-4 h-full flex flex-col gap-3 scrollbarfeature overflow-y-scroll text-xl font-normal">
         <div class="button_highlight">
