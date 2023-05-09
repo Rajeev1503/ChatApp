@@ -5,6 +5,9 @@ import { useChatRoomContext } from "../../context/chatRoomContext";
 import { useUserContext } from "../../context/userContext";
 import { createEffect, createSignal, onMount } from "solid-js";
 import serverUrl from "../../config/server_url";
+import { io } from "socket.io-client";
+const ENDPOINT = "http://localhost:5001";
+let socket, selectedChatCompare;
 
 export default function Chat() {
   const [chatRoomStore, setChatRoomStore] = useChatRoomContext();
@@ -21,6 +24,69 @@ export default function Chat() {
         messageBottomScrollDiv.clientHeight;
     }
     0;
+  });
+
+  createEffect(() => {
+    if (userStore.userId) {
+      socket = io(ENDPOINT);
+      socket.emit("setup", userStore.userId);
+      socket.on("connected");
+    }
+  });
+  createEffect(() => {
+    if (chatRoomStore.chatRoom.id) {
+      socket.emit("join chat", chatRoomStore.chatRoom.id);
+      selectedChatCompare = chatRoomStore.chatRoom.id;
+    }
+  });
+
+  createEffect(() => {
+    socket.on("update last message", (messageData) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare !== messageData.chatRoom.id
+      ) {
+        return;
+      } else {
+        userStore.allChatRooms.map((allChatRooms, i) => {
+          if (allChatRooms.chatRoom.id == chatRoomStore.chatRoom.id) {
+            return setUserStore("allChatRooms", [i], {
+              lastMessage: {
+                message: messageData.message,
+                date: messageData.dateAndTime || "23:23:23T23:23+23:00",
+              },
+            });
+          }
+        });
+      }
+    });
+  });
+
+  createEffect(() => {
+    socket.on("message received", (messageData) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare !== messageData.chatRoom.id
+      ) {
+        return;
+      } else {
+        userStore.allChatRooms.map((allChatRooms, i) => {
+          if (allChatRooms.chatRoom.id == chatRoomStore.chatRoom.id) {
+            return setUserStore("allChatRooms", [i], {
+              lastMessage: {
+                message: messageData.message,
+                date: messageData.dateAndTime || "23:23:23T23:23+23:00",
+              },
+            });
+          }
+        });
+        setChatRoomStore("messagesOfChatRoom", [
+          ...chatRoomStore.messagesOfChatRoom,
+          messageData,
+        ]);
+        // setMessages([...messages, newMessageRecieved]);
+      }
+    });
   });
 
   function setMessageTimeFormat(messageDateAndTime) {
@@ -43,58 +109,54 @@ export default function Chat() {
   }
 
   async function createMessagehandler() {
-    if (messageInput().length == 0) {
-      setErrorMessage("Empty message box");
-      return;
-    }
-    setErrorMessage("");
-    let dateAndTime = "";
-    (function () {
-      const d = new Date();
-
-      let diff = d.getTimezoneOffset();
-      return (dateAndTime = d.toISOString());
-    })();
-
-    const messageData = {
-      userId: {
-        id: userStore.userId,
-      },
-      message: messageInput(),
-      dateAndTime: dateAndTime,
-    };
-
-    setChatRoomStore("messagesOfChatRoom", [
-      ...chatRoomStore.messagesOfChatRoom,
-      messageData,
-    ]);
-
-    setMessageInput("");
-    const response = await fetch(
-      `${serverUrl}/chatMessage/createChatMessage/${chatRoomStore.chatRoom.id}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(messageData),
-      }
-    );
-    const messageResponse = await response.json();
-    if (messageResponse.success) {
-      userStore.allChatRooms.map((allChatRooms, i) => {
-        if (allChatRooms.chatRoom.id == chatRoomStore.chatRoom.id) {
-          return setUserStore("allChatRooms", [i], {
-            lastMessage: {
-              message: messageResponse.data.createChatMessage.message,
-              date: dateAndTime,
-            },
-          });
-        }
+    try {
+      if (messageInput().length == 0) {
+        setErrorMessage("Empty message box");
         return;
-      });
+      }
+      setErrorMessage("");
+      let dateAndTime = "";
+      (function () {
+        const d = new Date();
+
+        let diff = d.getTimezoneOffset();
+        return (dateAndTime = d.toISOString());
+      })();
+
+      const messageData = {
+        userId: {
+          id: userStore.userId,
+        },
+        message: messageInput(),
+        dateAndTime: dateAndTime,
+      };
+
+      setChatRoomStore("messagesOfChatRoom", [
+        ...chatRoomStore.messagesOfChatRoom,
+        messageData,
+      ]);
+
+      setMessageInput("");
+      const response = await fetch(
+        `${serverUrl}/chatMessage/createChatMessage/${chatRoomStore.chatRoom.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(messageData),
+        }
+      );
+      const messageResponse = await response.json();
+      if (messageResponse.success) {
+        socket.emit("createMessage", {
+          messageData: messageResponse.data.createChatMessage,
+        });
+      }
+      return messageResponse;
+    } catch (error) {
+      console.log(error);
     }
-    return messageResponse;
   }
 
   return (
